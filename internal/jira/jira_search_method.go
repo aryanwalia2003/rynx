@@ -52,7 +52,7 @@ func (j *Jira_client_struct) Jira_search_method(jql string) ([]string, error) {
 		for _, issue := range section.Issues {
 			if !seen[issue.Key] {
 				seen[issue.Key] = true
-				results = append(results, fmt.Sprintf("%s | %s", issue.Key, issue.SummaryText))
+				results = append(results, issue.Key)
 			}
 		}
 	}
