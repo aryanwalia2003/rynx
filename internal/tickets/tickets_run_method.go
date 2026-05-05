@@ -5,6 +5,7 @@ import (
 	"rynx/internal/jira"
 	"rynx/shared/configutils"
 	"rynx/shared/flagutils"
+	"rynx/shared/ttyutils"
 	"strings"
 )
 
@@ -16,16 +17,12 @@ func (t *Tickets_struct) Tickets_run_method(args []string) error {
 		return nil
 	}
 
-	statusFilter := strings.ToLower(flags["status"])
-
 	cfg, err := configutils.Config_load_merged_util()
 	if err != nil {
 		return err
 	}
 
 	client := jira.Jira_client_const(cfg)
-	
-	// Fetch tickets using Agile API to match the active sprint board
 	results, err := client.Jira_get_active_sprint_tickets_method(projectKey)
 	if err != nil {
 		return err
@@ -36,25 +33,25 @@ func (t *Tickets_struct) Tickets_run_method(args []string) error {
 		return nil
 	}
 
-	printed := 0
-	for _, result := range results {
-		// results are in format "KEY | Summary [Status]"
-		// We extract the status to filter it
-		if statusFilter != "" {
-			parts := strings.Split(result, "[")
+	// If --status flag provided, do a simple substring filter
+	if statusFilter := strings.ToLower(flags["status"]); statusFilter != "" {
+		for _, r := range results {
+			parts := strings.Split(r, "[")
 			if len(parts) > 1 {
-				statusPart := strings.TrimRight(parts[len(parts)-1], "]")
-				if !strings.Contains(strings.ToLower(statusPart), statusFilter) {
-					continue
+				status := strings.ToLower(strings.TrimRight(parts[len(parts)-1], "]"))
+				if strings.Contains(status, statusFilter) {
+					fmt.Println(r)
 				}
 			}
 		}
-		fmt.Println(result)
-		printed++
+		return nil
 	}
 
-	if printed == 0 {
-		fmt.Println("No tickets matched your filters.")
+	// No flag: launch interactive fuzzy picker
+	selected, ok := ttyutils.Tty_picker_util(results, "Filter tickets")
+	fmt.Print("\033[2J\033[H")
+	if ok {
+		fmt.Println(selected)
 	}
 	return nil
 }
