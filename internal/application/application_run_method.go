@@ -3,6 +3,7 @@ package application
 import (
 	"rynx/internal/authcmd"
 	"rynx/internal/initcmd"
+	"rynx/internal/prcmd"
 	"rynx/internal/tickets"
 	"rynx/internal/viewcmd"
 	"rynx/shared/errors"
@@ -39,5 +40,10 @@ func (a *Application_struct) Application_run_method(args []string) error {
 		return viewCmd.View_run_method(args[1:])
 	}
 
-	return errors.Error_wrap_util("unknown commald: "+command, nil)
+	if command == "pr" {
+		prCmd := prcmd.PR_const(a.logger)
+		return prCmd.PR_run_method(args[1:])
+	}
+
+	return errors.Error_wrap_util("unknown command: "+command, nil)
 }
