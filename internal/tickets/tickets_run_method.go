@@ -23,35 +23,77 @@ func (t *Tickets_struct) Tickets_run_method(args []string) error {
 	}
 
 	client := jira.Jira_client_const(cfg)
-	results, err := client.Jira_get_active_sprint_tickets_method(projectKey)
+	results, err := client.Jira_get_my_tickets_method(projectKey)
 	if err != nil {
 		return err
 	}
 
 	if len(results) == 0 {
-		fmt.Println("No tickets found in the active sprint.")
+		fmt.Println("No tickets found.")
 		return nil
 	}
 
-	// If --status flag provided, do a simple substring filter
-	if statusFilter := strings.ToLower(flags["status"]); statusFilter != "" {
-		for _, r := range results {
-			parts := strings.Split(r, "[")
-			if len(parts) > 1 {
-				status := strings.ToLower(strings.TrimRight(parts[len(parts)-1], "]"))
-				if strings.Contains(status, statusFilter) {
-					fmt.Println(r)
+	_, hasStatusFlag := flags["status"]
+	statusVal := flags["status"]
+
+	if hasStatusFlag {
+		if statusVal == "" {
+			// Extract all unique statuses
+			statusSet := make(map[string]bool)
+			for _, r := range results {
+				parts := strings.Split(r, "[")
+				if len(parts) > 1 {
+					status := strings.TrimRight(parts[len(parts)-1], "]")
+					statusSet[status] = true
 				}
 			}
+
+			var statuses []string
+			for s := range statusSet {
+				statuses = append(statuses, s)
+			}
+
+			if len(statuses) == 0 {
+				fmt.Println("No statuses found.")
+				return nil
+			}
+
+			selectedStatus, ok := ttyutils.Tty_picker_util(statuses, "Select Status")
+			if !ok {
+				return nil
+			}
+
+			fmt.Print("\033[2J\033[H") // Clear screen
+			fmt.Printf("Tickets in status: %s\n\n", selectedStatus)
+			for _, r := range results {
+				parts := strings.Split(r, "[")
+				if len(parts) > 1 {
+					status := strings.TrimRight(parts[len(parts)-1], "]")
+					if status == selectedStatus {
+						fmt.Println(r)
+					}
+				}
+			}
+			return nil
+		} else {
+			// If --status provided a value, do a simple substring filter
+			statusFilter := strings.ToLower(statusVal)
+			for _, r := range results {
+				parts := strings.Split(r, "[")
+				if len(parts) > 1 {
+					status := strings.ToLower(strings.TrimRight(parts[len(parts)-1], "]"))
+					if strings.Contains(status, statusFilter) {
+						fmt.Println(r)
+					}
+				}
+			}
+			return nil
 		}
-		return nil
 	}
 
-	// No flag: launch interactive fuzzy picker
-	selected, ok := ttyutils.Tty_picker_util(results, "Filter tickets")
-	fmt.Print("\033[2J\033[H")
-	if ok {
-		fmt.Println(selected)
+	// No flag: print all my tickets
+	for _, r := range results {
+		fmt.Println(r)
 	}
 	return nil
 }
