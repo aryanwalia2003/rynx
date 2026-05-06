@@ -14,11 +14,37 @@ type jira_issue_detail_struct struct {
 		Status  struct {
 			Name string `json:"name"`
 		} `json:"status"`
+		Description struct {
+			Content []struct {
+				Content []struct {
+					Text string `json:"text"`
+				} `json:"content"`
+			} `json:"content"`
+		} `json:"description"`
+		Assignee struct {
+			DisplayName string `json:"displayName"`
+		} `json:"assignee"`
+		Reporter struct {
+			DisplayName string `json:"displayName"`
+		} `json:"reporter"`
 	} `json:"fields"`
 }
 
+func (d *jira_issue_detail_struct) extract_description_util() string {
+	var out string
+	for _, p := range d.Fields.Description.Content {
+		for _, c := range p.Content {
+			if c.Text != "" {
+				out += c.Text
+			}
+		}
+		out += "\n\n"
+	}
+	return out
+}
+
 func (j *Jira_client_struct) fetch_issue_detail_method(key string) (*jira_issue_detail_struct, error) {
-	path := fmt.Sprintf("https://%s/rest/api/3/issue/%s?fields=summary,status", j.config.Jira.Domain, key)
+	path := fmt.Sprintf("https://%s/rest/api/3/issue/%s?fields=summary,status,description,assignee,reporter", j.config.Jira.Domain, key)
 	req, _ := http.NewRequest("GET", path, nil)
 	req.Header.Set("Accept", "application/json")
 	req.SetBasicAuth(j.config.Jira.UserEmail, j.config.Jira.Token)
