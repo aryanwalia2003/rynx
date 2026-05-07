@@ -4,6 +4,7 @@ import (
 	"rynx/internal/authcmd"
 	"rynx/internal/initcmd"
 	"rynx/internal/linkcmd"
+	"rynx/internal/movecmd"
 	"rynx/internal/prcmd"
 	"rynx/internal/startcmd"
 	"rynx/internal/tickets"
@@ -65,6 +66,11 @@ func (a *Application_struct) Application_run_method(args []string) error {
 	if command == "unlink" {
 		linkCmd := linkcmd.Link_const(a.logger)
 		return linkCmd.Unlink_run_method(args[1:])
+	}
+
+	if command == "move" {
+		moveCmd := movecmd.Move_const(a.logger)
+		return moveCmd.Move_run_method(args[1:])
 	}
 
 	return errors.Error_wrap_util("unknown command: "+command, nil)
