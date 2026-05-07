@@ -4,6 +4,7 @@ import (
 	"rynx/internal/authcmd"
 	"rynx/internal/initcmd"
 	"rynx/internal/prcmd"
+	"rynx/internal/startcmd"
 	"rynx/internal/tickets"
 	"rynx/internal/viewcmd"
 	"rynx/shared/errors"
@@ -43,6 +44,11 @@ func (a *Application_struct) Application_run_method(args []string) error {
 	if command == "pr" {
 		prCmd := prcmd.PR_const(a.logger)
 		return prCmd.PR_run_method(args[1:])
+	}
+
+	if command == "start" {
+		startCmd := startcmd.Start_const(a.logger)
+		return startCmd.Start_run_method(args[1:])
 	}
 
 	return errors.Error_wrap_util("unknown command: "+command, nil)
