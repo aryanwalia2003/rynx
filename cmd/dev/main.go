@@ -15,6 +15,6 @@ func main() {
 		log.Logger_error_method("Application failed", err)
 		os.Exit(1)
 	}
-	
+
 	fmt.Println("Done.")
 }

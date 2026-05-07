@@ -11,7 +11,7 @@ import (
 type jira_picker_response_struct struct {
 	Sections []struct {
 		Issues []struct {
-			Key        string `json:"key"`
+			Key         string `json:"key"`
 			SummaryText string `json:"summaryText"`
 		} `json:"issues"`
 	} `json:"sections"`

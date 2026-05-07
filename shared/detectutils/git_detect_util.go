@@ -20,7 +20,7 @@ func Git_detect_util() (*config.Git_config_struct, error) {
 	}
 
 	return &config.Git_config_struct{
-		OriginURL:    origin,
+		OriginURL:     origin,
 		DefaultBranch: "main",
 	}, nil
 }

@@ -24,7 +24,7 @@ func (j *Jira_client_struct) Jira_get_active_sprint_tickets_method(projectKey st
 	boardURL := fmt.Sprintf("https://%s/rest/agile/1.0/board?projectKeyOrId=%s", j.config.Jira.Domain, projectKey)
 	req, _ := http.NewRequest("GET", boardURL, nil)
 	req.SetBasicAuth(j.config.Jira.UserEmail, j.config.Jira.Token)
-	
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Error_wrap_util("board fetch failed", err)
@@ -55,7 +55,7 @@ func (j *Jira_client_struct) Jira_get_active_sprint_tickets_method(projectKey st
 	issuesURL := fmt.Sprintf("https://%s/rest/agile/1.0/board/%d/issue?jql=sprint+in+openSprints()+AND+assignee=currentUser()", j.config.Jira.Domain, boardID)
 	req, _ = http.NewRequest("GET", issuesURL, nil)
 	req.SetBasicAuth(j.config.Jira.UserEmail, j.config.Jira.Token)
-	
+
 	resp, err = http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Error_wrap_util("agile issues request failed", err)

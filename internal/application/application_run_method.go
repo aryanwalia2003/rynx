@@ -3,6 +3,7 @@ package application
 import (
 	"rynx/internal/authcmd"
 	"rynx/internal/initcmd"
+	"rynx/internal/linkcmd"
 	"rynx/internal/prcmd"
 	"rynx/internal/startcmd"
 	"rynx/internal/tickets"
@@ -49,6 +50,21 @@ func (a *Application_struct) Application_run_method(args []string) error {
 	if command == "start" {
 		startCmd := startcmd.Start_const(a.logger)
 		return startCmd.Start_run_method(args[1:])
+	}
+
+	if command == "link" {
+		linkCmd := linkcmd.Link_const(a.logger)
+		return linkCmd.Link_run_method(args[1:])
+	}
+
+	if command == "show-links" {
+		linkCmd := linkcmd.Link_const(a.logger)
+		return linkCmd.Show_links_run_method(args[1:])
+	}
+
+	if command == "unlink" {
+		linkCmd := linkcmd.Link_const(a.logger)
+		return linkCmd.Unlink_run_method(args[1:])
 	}
 
 	return errors.Error_wrap_util("unknown command: "+command, nil)

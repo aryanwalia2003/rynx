@@ -38,7 +38,7 @@ func Load_cache_util() (*Cache, error) {
 	if err := json.Unmarshal(data, &cache); err != nil {
 		return &Cache{BranchTickets: make(map[string]string)}, nil
 	}
-	
+
 	if cache.BranchTickets == nil {
 		cache.BranchTickets = make(map[string]string)
 	}

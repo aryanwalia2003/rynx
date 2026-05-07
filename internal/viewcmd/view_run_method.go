@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	ansi_bold       = "\033[1m"
-	ansi_reset      = "\033[0m"
-	ansi_cyan       = "\033[36m"
-	ansi_green      = "\033[32m"
-	ansi_yellow     = "\033[33m"
+	ansi_bold   = "\033[1m"
+	ansi_reset  = "\033[0m"
+	ansi_cyan   = "\033[36m"
+	ansi_green  = "\033[32m"
+	ansi_yellow = "\033[33m"
 )
 
 func (v *View_struct) View_run_method(args []string) error {
@@ -41,17 +41,17 @@ func (v *View_struct) View_run_method(args []string) error {
 	fmt.Print("\033[2J\033[H") // Clear screen
 	fmt.Printf("%s%s[%s]%s %s\n", ansi_bold, ansi_cyan, detail.Key, ansi_reset, detail.Summary)
 	fmt.Printf("%sStatus:%s %s%s%s\n", ansi_bold, ansi_reset, ansi_green, detail.Status, ansi_reset)
-	
+
 	if detail.Assignee != "" {
 		fmt.Printf("%sAssignee:%s %s\n", ansi_bold, ansi_reset, detail.Assignee)
 	}
 	if detail.Reporter != "" {
 		fmt.Printf("%sReporter:%s %s\n", ansi_bold, ansi_reset, detail.Reporter)
 	}
-	
+
 	fmt.Printf("\n%sDescription:%s\n", ansi_bold, ansi_reset)
 	fmt.Println(strings.Repeat("-", 40))
-	
+
 	desc := strings.TrimSpace(detail.Description)
 	if desc == "" {
 		fmt.Println("No description provided.")

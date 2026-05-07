@@ -19,7 +19,7 @@ func (cmd *Init_struct) Init_run_method() error {
 	cmd.logger.Logger_info_method("Detected Git remote: " + gitCfg.OriginURL)
 
 	jiraCfg := detectutils.Jira_detect_util(gitCfg)
-	
+
 	msg := "Enter Jira project key (or 'skip' to disable Jira integration)"
 	userProj, err := promptutils.Prompt_string_util(msg, jiraCfg.DefaultProjectKey)
 	if err != nil {

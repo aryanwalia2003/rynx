@@ -9,7 +9,7 @@ import (
 func (j *Jira_client_struct) Get_myself_method() (string, error) {
 	domain := j.config.Jira.Domain
 	url := fmt.Sprintf("https://%s/rest/api/3/myself", domain)
-	
+
 	req, _ := http.NewRequest("GET", url, nil)
 	req.SetBasicAuth(j.config.Jira.UserEmail, j.config.Jira.Token)
 

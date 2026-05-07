@@ -12,7 +12,7 @@ func Config_load_merged_util() (*config.Config_struct, error) {
 
 	path, _ := Config_global_path_util()
 	global, _ := Config_load_util(path)
-	
+
 	if global != nil {
 		local.Jira.Token = global.Jira.Token
 		if local.Jira.UserEmail == "" {
