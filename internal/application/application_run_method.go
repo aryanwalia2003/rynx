@@ -1,6 +1,7 @@
 package application
 
 import (
+	"fmt"
 	"rynx/internal/authcmd"
 	"rynx/internal/createcmd"
 	"rynx/internal/initcmd"
@@ -11,6 +12,7 @@ import (
 	"rynx/internal/tickets"
 	"rynx/internal/viewcmd"
 	"rynx/shared/errors"
+	"rynx/shared/version"
 )
 
 func (a *Application_struct) Application_run_method(args []string) error {
@@ -19,6 +21,13 @@ func (a *Application_struct) Application_run_method(args []string) error {
 	}
 
 	command := args[0]
+
+	if command == "version" {
+		fmt.Printf("rynx version %s\n", version.Version)
+		fmt.Printf("commit: %s\n", version.Commit)
+		fmt.Printf("build date: %s\n", version.BuildDate)
+		return nil
+	}
 
 	if command == "init" {
 		initCmd := initcmd.Init_const(a.logger)

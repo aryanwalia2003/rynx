@@ -1,0 +1,65 @@
+version: 2
+project_name: rynx
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    main: ./cmd/dev/main.go
+    binary: rynx
+    ldflags:
+      - -s -w -X rynx/shared/version.Version={{.Version}} -X rynx/shared/version.Commit={{.Commit}} -X rynx/shared/version.BuildDate={{.Date}}
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+
+nfpms:
+  - file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}"
+    homepage: https://github.com/aryanwalia2003/rynx
+    description: Rynx CLI - Developer productivity tool for Jira and GitHub
+    maintainer: Aryan Walia <aryanwalia2003@gmail.com>
+    license: MIT
+    formats:
+      - deb
+    bindir: /usr/bin
+
+brews:
+  - repository:
+      owner: aryanwalia2003
+      name: homebrew-tap
+    directory: Formula
+    homepage: https://github.com/aryanwalia2003/rynx
+    description: Rynx CLI - Developer productivity tool for Jira and GitHub
+    license: MIT
+    install: |
+      bin.install "rynx"
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-snapshot"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
