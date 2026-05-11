@@ -18,6 +18,6 @@ func (a *Application_struct) Application_ping_method() error {
 		return err
 	}
 
-	fmt.Println(res)
+	fmt.Printf("✅ Connected as %s (%s)\n", res.DisplayName, res.EmailAddress)
 	return nil
 }

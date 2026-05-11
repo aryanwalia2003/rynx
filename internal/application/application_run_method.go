@@ -2,6 +2,7 @@ package application
 
 import (
 	"rynx/internal/authcmd"
+	"rynx/internal/createcmd"
 	"rynx/internal/initcmd"
 	"rynx/internal/linkcmd"
 	"rynx/internal/movecmd"
@@ -71,6 +72,11 @@ func (a *Application_struct) Application_run_method(args []string) error {
 	if command == "move" {
 		moveCmd := movecmd.Move_const(a.logger)
 		return moveCmd.Move_run_method(args[1:])
+	}
+
+	if command == "create" {
+		createCmd := createcmd.Create_const(a.logger)
+		return createCmd.Create_run_method(args[1:])
 	}
 
 	return errors.Error_wrap_util("unknown command: "+command, nil)

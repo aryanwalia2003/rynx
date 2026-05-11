@@ -5,10 +5,23 @@ import (
 	"os"
 	"path/filepath"
 	"rynx/shared/configutils"
+	"time"
 )
 
+type TicketDraftStruct struct {
+	ProjectKey   string `json:"project_key"`
+	IssueTypeID  string `json:"issue_type_id"`
+	IssueType    string `json:"issue_type"`
+	Summary      string `json:"summary"`
+	Description  string `json:"description"`
+	Attachment   string `json:"attachment"`
+	UpdatedAt    time.Time `json:"updated_at"`
+}
+
 type Cache struct {
-	BranchTickets map[string]string `json:"branch_tickets"` // Branch name -> Ticket ID
+	BranchTickets  map[string]string `json:"branch_tickets"` // Branch name -> Ticket ID
+	RecentProjects []string          `json:"recent_projects"`
+	TicketDraft    *TicketDraftStruct `json:"ticket_draft,omitempty"`
 }
 
 func getCachePath() (string, error) {
@@ -36,11 +49,17 @@ func Load_cache_util() (*Cache, error) {
 
 	var cache Cache
 	if err := json.Unmarshal(data, &cache); err != nil {
-		return &Cache{BranchTickets: make(map[string]string)}, nil
+		return &Cache{
+			BranchTickets:  make(map[string]string),
+			RecentProjects: make([]string, 0),
+		}, nil
 	}
 
 	if cache.BranchTickets == nil {
 		cache.BranchTickets = make(map[string]string)
+	}
+	if cache.RecentProjects == nil {
+		cache.RecentProjects = make([]string, 0)
 	}
 
 	return &cache, nil
